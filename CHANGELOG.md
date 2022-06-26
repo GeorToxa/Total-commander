@@ -10,4 +10,9 @@ Main changes:
 Added:
 -Opening notebook when user open .txt file
 -Opening notebook or IDE when user open .py file
--Created file 'logs.txt' for errors 
+-Created file 'logs.txt' for errors
+
+v1.1.1
+Main changes:
+Added:
+-Second try for deleting files and folders

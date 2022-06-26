@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QComboBox, QLineEdit, QListWidget, QPushButton, QWidget
+from PyQt5.QtWidgets import QComboBox, QLineEdit, QListWidget, QPushButton, QWidget, QMessageBox
 import os, shutil, win32api
 
 
@@ -8,7 +8,7 @@ class MainWindow(QWidget):
         # Параметры окна
         self.setFixedSize(1000, 612)
         self.setWindowTitle("Total Commander MEGA VERSION!!! - NOT REGISTERED - 2022 EDITION")
-        self.setStyleSheet(self.CssLoader())  # Load CSS style into window
+        self.setStyleSheet(self.CssLoader())  # Load CSS style in window
 
         # Вспомогательные финтифлюшки
         self.drives = win32api.GetLogicalDriveStrings()  # Получение данных о дисках
@@ -77,24 +77,6 @@ class MainWindow(QWidget):
         self.RigthToLeftBtn.clicked.connect(self.moveRightToLeftBtn)
 
     # Оброботчики событий
-    def infoHelp(self):  # Вывод справки
-        print("""
-            Для создания файла выберите тип файла в COMBOBOX(1) и напишите название(без расширений) в LINEEDIT(2) после нажмите кнопку CREATE
-            
-            Для удаления файла выберите файл в LISTWIDGET и нажмите кнопку REMOVE
-            
-            Для переименования файла выберите файл в LISTWIDGET, напишите новое имя в LINEEDIT(3), после нажмите кнопку RENAME 
-            
-            Для перемещения выберите файл в одном из LISTWIDGET, а во втором LISTWIDGET выберите путь куда переместите файл, после выберите с какого листа вы хотите переместить файл(4)
-            ===================================================
-            1-Если файл создается в левом LISTWIDGET, то выбирать расширения в левом COMBOBOX, иначе в правом COMBOBOX
-            2-Если файл создается в левом LISTWIDGET, то писать имя файла в левом LINEEDIT, иначе в правом LINEEDIT
-            3-Если файл переименовывается в левом LISTWIDGET, то писать новое имя файла в левом LINEEDIT, иначе в правом LINEEDIT
-            4-I(L to R-файлы перемещаются с пути левого LISTWIDGET на правый LISTWIDGET), II(R to L-файлы перемещаются с правого LISTWIDGET на левый LISTWIDGET)
-            ===================================================
-            ВНИМАНИЕ! ПОСЛЕ КАЖДЫХ ИЗМЕНЕНИЙ ЗАЙДИТЕ В ЛЮБУЮ ПАПКУ И ВЕРНИТЕСЬ НАЗАД ДЛЯ ОБНОВЛЕНИЯ СПИСКОВ!
-            """)
-
     def loadDir(self):  # Выгрузка файлов папки по выбраному пути
         self.files_with = ["..."]
         self.files = []
@@ -233,6 +215,15 @@ class MainWindow(QWidget):
             self.update()
         except Exception as e:
             self.logs(e)
+            try:
+                if self.leftList.currentItem():
+                    os.remove(f"{self.leftDir}/{self.leftList.currentItem().text()}")
+                elif self.rightList.currentItem():
+                    os.remove(f"{self.rightDir}/{self.rightList.currentItem().text()}")
+            except Exception as e:
+                self.logs(e)
+        finally:
+            print("Successful removal")
 
     def renameFileBtn(self):  # Переименование файла
         try:
@@ -260,7 +251,6 @@ class MainWindow(QWidget):
 
     def update(self):  # Обновление программы после любых изменений
         try:
-
             self.leftList.clear()
             self.path = self.leftComboBoxDrive.currentText()
             self.loadDir()
@@ -287,11 +277,31 @@ class MainWindow(QWidget):
         except Exception as e:
             self.logs(e)
 
-    def logs(self, e):  # Запись логов с ошибками
+    @staticmethod
+    def logs(e):  # Запись логов с ошибками
         from datetime import datetime
 
         with open("C:/Users/krist/Desktop/Project/total comander/logs.txt", "a") as file:
-            file.write(f"[{datetime.now()}: {e}\n")
+            file.write(f"[{datetime.now()}]: {e}\n")
+
+    @staticmethod
+    def infoHelp():  # Вывод справки
+        print("""
+                Для создания файла выберите тип файла в COMBOBOX(1) и напишите название(без расширений) в LINEEDIT(2) после нажмите кнопку CREATE
+
+                Для удаления файла выберите файл в LISTWIDGET и нажмите кнопку REMOVE
+
+                Для переименования файла выберите файл в LISTWIDGET, напишите новое имя в LINEEDIT(3), после нажмите кнопку RENAME 
+
+                Для перемещения выберите файл в одном из LISTWIDGET, а во втором LISTWIDGET выберите путь куда переместите файл, после выберите с какого листа вы хотите переместить файл(4)
+                ===================================================
+                1-Если файл создается в левом LISTWIDGET, то выбирать расширения в левом COMBOBOX, иначе в правом COMBOBOX
+                2-Если файл создается в левом LISTWIDGET, то писать имя файла в левом LINEEDIT, иначе в правом LINEEDIT
+                3-Если файл переименовывается в левом LISTWIDGET, то писать новое имя файла в левом LINEEDIT, иначе в правом LINEEDIT
+                4-I(L to R-файлы перемещаются с пути левого LISTWIDGET на правый LISTWIDGET), II(R to L-файлы перемещаются с правого LISTWIDGET на левый LISTWIDGET)
+                ===================================================
+                ВНИМАНИЕ! ПОСЛЕ КАЖДЫХ ИЗМЕНЕНИЙ ЗАЙДИТЕ В ЛЮБУЮ ПАПКУ И ВЕРНИТЕСЬ НАЗАД ДЛЯ ОБНОВЛЕНИЯ СПИСКОВ!
+                """)
 
     @staticmethod
     def CssLoader():  # Подключение css стилей
@@ -299,4 +309,3 @@ class MainWindow(QWidget):
             style = read.read()
             read.close()
         return style
-
