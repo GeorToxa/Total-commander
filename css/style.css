@@ -1,0 +1,48 @@
+QWidget {
+    background: #262D37;
+}
+QLabel {
+    color: #fff;
+}
+QLabel:hover {
+    padding: 0px 0px;
+    border: 1px solid #fff;
+    margin: 0px;
+    margin-right: 5px;
+    border-radius: 3px;
+}
+
+QLabel#infoToJsonLbl,#infoToTxtLbl,#prettyOutLbl,#oneVarLbl,#twoVarLbl {
+    border: 1px solid #fff;
+    border-radius: 8px;
+    padding: 2px;
+}
+QComboBox {
+    color: #fff;
+    background: blue;
+}
+QComboBox:hover {
+    border: 1px solid #fff;
+}
+QComboBox, QAbstractItemView {
+    color: #fff;
+    background: blue;
+}
+QLineEdit {
+    background-color: blue;
+    color: white;
+}
+QLineEdit:hover {
+    border: 1px solid #fff;
+}
+QPushButton {
+    color: #fff;
+    background-color: blue;
+    border: 1px solid #fff;
+}
+QPushButton:hover {
+    border: 2px solid #fff;
+}
+QListWidget {
+    background-color: grey;
+}
