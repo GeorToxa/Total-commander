@@ -7,5 +7,7 @@ Main changes:
 
 v1.1
 Main changes:
--Fixed updates after changes on pc
--Fixed bugs with deleting files
+Added:
+-Opening notebook when user open .txt file
+-Opening notebook or IDE when user open .py file
+-Created file 'logs.txt' for errors 

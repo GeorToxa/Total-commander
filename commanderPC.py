@@ -132,7 +132,7 @@ class MainWindow(QWidget):
             self.leftList.addItems(self.files)
             self.leftDir = self.path
         except Exception as e:
-            print(e)
+            self.logs(e)
 
     def chooseRightComboDir(self):  # Выгрузка файлов в правый LISTWIDGET в зависимости от выбраного диска
         try:
@@ -142,7 +142,7 @@ class MainWindow(QWidget):
             self.rightList.addItems(self.files)
             self.rightDir = self.path
         except Exception as e:
-            print(e)
+            self.logs(e)
 
     def chooseLeftListDir(self):  # Переход по папкам в левом LISTWIDGET
         try:
@@ -160,15 +160,17 @@ class MainWindow(QWidget):
                     self.leftList.addItems(self.files)
                 else:
                     self.leftList.addItems(self.files_with)
-
             else:
-                self.path = f"{os.getcwd()}/{self.leftList.currentItem().text()}"
-                self.leftList.clear()
-                self.loadDir()
-                self.leftList.addItems(self.files_with)
+                if ".txt" in self.leftList.currentItem().text() or ".py" in self.leftList.currentItem().text():
+                    self.openLeftFile()
+                else:
+                    self.path = f"{os.getcwd()}/{self.leftList.currentItem().text()}"
+                    self.leftList.clear()
+                    self.loadDir()
+                    self.leftList.addItems(self.files_with)
             self.leftDir = self.path
         except Exception as e:
-            print(e)
+            self.logs(e)
 
     def chooseRightListDir(self):  # Переход по папкам в правом LISTWIDGET
         try:
@@ -187,13 +189,15 @@ class MainWindow(QWidget):
                 else:
                     self.rightList.addItems(self.files_with)
             else:
+                if ".txt" in self.rightList.currentItem().text() or ".py" in self.rightList.currentItem().text():
+                    self.openRightFile()
                 self.path = f"{os.getcwd()}/{self.rightList.currentItem().text()}"
                 self.rightList.clear()
                 self.loadDir()
                 self.rightList.addItems(self.files_with)
             self.rightDir = self.path
         except Exception as e:
-            print(e)
+            self.logs(e)
 
     def createFileBtn(self):  # Создание файла
         try:
@@ -211,7 +215,7 @@ class MainWindow(QWidget):
                         file.write("")
             self.update()
         except Exception as e:
-            print(e)
+            self.logs(e)
 
     def removeFileBtn(self):  # Удаление файла
         try:
@@ -228,7 +232,7 @@ class MainWindow(QWidget):
                 shutil.rmtree(f"{self.rightDir}/{self.rightList.currentItem().text()}")
             self.update()
         except Exception as e:
-            print(e)
+            self.logs(e)
 
     def renameFileBtn(self):  # Переименование файла
         try:
@@ -238,21 +242,21 @@ class MainWindow(QWidget):
                 os.rename(f"{self.rightDir}/{self.rightList.currentItem().text()}", f"{self.rightDir}/{self.rightInputLine.text()}")
             self.update()
         except Exception as e:
-            print(e)
+            self.logs(e)
 
     def moveLeftToRightBtn(self):  # Перемещение слева направо
         try:
             shutil.move(f"{self.leftDir}/{self.leftList.currentItem().text()}", f"{self.rightDir}")
             self.update()
         except Exception as e:
-            print(e)
+            self.logs(e)
 
     def moveRightToLeftBtn(self):  # Перемещение справа налево
         try:
             shutil.move(f"{self.rightDir}/{self.rightList.currentItem().text()}", f"{self.leftDir}")
             self.update()
         except Exception as e:
-            print(e)
+            self.logs(e)
 
     def update(self):  # Обновление программы после любых изменений
         try:
@@ -261,18 +265,36 @@ class MainWindow(QWidget):
             self.path = self.leftComboBoxDrive.currentText()
             self.loadDir()
             self.leftList.addItems(self.files)
-            # self.leftDir = self.path
+            self.leftDir = self.path
 
             self.rightList.clear()
             self.path = self.rightComboBoxDrive.currentText()
             self.loadDir()
             self.rightList.addItems(self.files)
-            # self.rightDir = self.path
+            self.rightDir = self.path
         except Exception as e:
-            print(e)
+            self.logs(e)
+
+    def openLeftFile(self):  # Открытие файлов с расширениями .txt и .py в левом списке
+        try:
+            os.system(f"{self.leftDir}/{self.leftList.currentItem().text()}")
+        except Exception as e:
+            self.logs(e)
+
+    def openRightFile(self):  # Открытие файлов с расширениями .txt и .py в правом списке
+        try:
+            os.system(f"{self.leftDir}/{self.rightList.currentItem().text()}")
+        except Exception as e:
+            self.logs(e)
+
+    def logs(self, e):  # Запись логов с ошибками
+        from datetime import datetime
+
+        with open("C:/Users/krist/Desktop/Project/total comander/logs.txt", "a") as file:
+            file.write(f"[{datetime.now()}: {e}\n")
 
     @staticmethod
-    def CssLoader():
+    def CssLoader():  # Подключение css стилей
         with open("css/style.css", "r") as read:
             style = read.read()
             read.close()
