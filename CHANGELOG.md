@@ -22,3 +22,10 @@ Main changes:
 Added:
 -Opening files with extensions 
 -To open files with extensions, select this file from the list and click the "Open" button
+
+v1.3
+Main changes:
+Added:
+-The user can copy the link of the directory they are in
+Replaced:
+-All comments translated to english

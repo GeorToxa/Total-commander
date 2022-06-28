@@ -1,79 +1,125 @@
-from PyQt5.QtWidgets import QComboBox, QLineEdit, QListWidget, QPushButton, QWidget, QLabel
+from PyQt5.QtWidgets import QComboBox, QLineEdit, QListWidget, QPushButton, QWidget
 import os, shutil, win32api
 
 
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
-        # Параметры окна
-        self.setFixedSize(1000, 612)
-        self.setWindowTitle("Total Commander MEGA VERSION!!! - NOT REGISTERED - 2022 EDITION")
+
+        # Window Options
+        self.setFixedSize(1000, 612)  # Window size
+        self.setWindowTitle("Total Commander MEGA VERSION!!! - NOT REGISTERED - 2022 EDITION")  # Window title
         self.setStyleSheet(self.CssLoader())  # Load CSS style in window
 
-        # Вспомогательные финтифлюшки
-        self.drives = win32api.GetLogicalDriveStrings()  # Получение данных о дисках
-        self.drives = self.drives.split('\000')[:-1]  # Преобразование данных о дисках
+        # Working with disks
+        self.drives = win32api.GetLogicalDriveStrings()  # Getting information about disks
+        self.drives = self.drives.split('\000')[:-1]  # Disk Data Conversion
 
+        # Directory variables
         self.leftDir = ""
         self.rightDir = ""
-        self.types = ["folder", ".py", ".txt"]
-        self.types2 = ".py.txt.exe.zip.rar"
+        self.types = ["folder", ".py", ".txt"]  # List of file extensions
+        self.types2 = ".py.txt.exe.zip.rar"  # File extension string
 
-        # Виджеты
-        self.leftComboBoxDrive = QComboBox(self)
-        self.leftList = QListWidget(self)
-        self.leftComboBoxType = QComboBox(self)
-        self.leftInputLine = QLineEdit(self)
-        self.createBtn = QPushButton("Create", self)
-        self.removeBtn = QPushButton("Remove", self)
-        self.renameBtn = QPushButton("Rename", self)
-        self.leftToRightBtn = QPushButton("L to R", self)
-        self.rigthToLeftBtn = QPushButton("R to L", self)
-        self.openBtn = QPushButton("Open", self)
-        self.leftWeightLbl = QLabel("0", self)
-        self.rightWeightLbl = QLabel("0", self)
-        self.rightComboBoxDrive = QComboBox(self)
-        self.rightList = QListWidget(self)
-        self.rightComboBoxType = QComboBox(self)
-        self.rightInputLine = QLineEdit(self)
+        # Widgets
 
-        # Расположение виджетов
-        self.leftComboBoxDrive.setGeometry(10, 30, 69, 22)
-        self.leftList.setGeometry(10, 60, 450, 500)
-        self.leftComboBoxType.setGeometry(10, 575, 69, 22)
-        self.leftInputLine.setGeometry(85, 575, 100, 22)
-        self.createBtn.setGeometry(475, 100, 50, 50)
-        self.removeBtn.setGeometry(475, 175, 50, 50)
-        self.renameBtn.setGeometry(475, 250, 50, 50)
-        self.leftToRightBtn.setGeometry(475, 325, 50, 50)
-        self.rigthToLeftBtn.setGeometry(475, 400, 50, 50)
-        self.openBtn.setGeometry(475, 475, 50, 50)
-        self.leftWeightLbl.setGeometry(285, 575, 50, 22)
-        self.rightWeightLbl.setGeometry(815, 575, 50, 22)
-        self.rightComboBoxDrive.setGeometry(540, 30, 69, 22)
-        self.rightList.setGeometry(540, 60, 450, 500)
-        self.rightComboBoxType.setGeometry(540, 575, 69, 22)
-        self.rightInputLine.setGeometry(615, 575, 100, 22)
+        # Creating combo boxes
+        self.leftComboBoxDrive = QComboBox(self)  # Creating a left combo box with disks
+        self.rightComboBoxDrive = QComboBox(self)  # Creating a right combo box with disks
+        self.leftComboBoxType = QComboBox(self)  # Creating a left combo box with extensions
+        self.rightComboBoxType = QComboBox(self)  # Creating a right combo box with extensions
 
-        # Показ виджетов
-        self.leftComboBoxDrive.show()
-        self.leftList.show()
-        self.leftComboBoxType.show()
-        self.leftInputLine.show()
-        self.createBtn.show()
-        self.removeBtn.show()
-        self.renameBtn.show()
-        self.leftToRightBtn.show()
-        self.rigthToLeftBtn.show()
-        self.openBtn.hide()
-        self.leftWeightLbl.hide()
-        self.rightWeightLbl.hide()
-        self.rightComboBoxDrive.show()
-        self.rightList.show()
-        self.rightComboBoxType.show()
-        self.rightInputLine.show()
+        # Combo box layout
+        self.leftComboBoxDrive.move(10, 30)  # Setting the position of the left combo box with disks
+        self.rightComboBoxDrive.move(540, 30)  # Setting the position of the right combo box with disks
+        self.leftComboBoxType.move(10, 575)  # Setting the position of the left combo box with extensions
+        self.rightComboBoxType.move(540, 575)  # Setting the position of the right combo box with extensions
 
-        # События
+        # Sizing combo boxes
+        self.leftComboBoxDrive.setFixedSize(69, 22)  # Setting the size of the left combo box with disks
+        self.rightComboBoxDrive.setFixedSize(69, 22)  # Setting the size of the right combo box with disks
+        self.leftComboBoxType.setFixedSize(69, 22)  # Setting the size of the left combo box with extensions
+        self.rightComboBoxType.setFixedSize(69, 22)  # Setting the size of the right combo box with extensions
+
+        # Show combo boxes
+        self.leftComboBoxDrive.show()  # Showing the left combo box with disks
+        self.rightComboBoxDrive.show()  # Showing the right combo box with disks
+        self.leftComboBoxType.show()  # Show left combo box with extensions
+        self.rightComboBoxType.show()  # Show right combo box with extensions
+
+        # Creating lists
+        self.leftList = QListWidget(self)  # Creating the left list
+        self.rightList = QListWidget(self)  # Creating the right list
+
+        # Lists layout
+        self.leftList.move(10, 60)  # Setting the position of the left list
+        self.rightList.move(540, 60)  # Setting the position of the right list
+
+        # Sizing lists
+        self.leftList.setFixedSize(450, 500)  # Setting the size of the left list
+        self.rightList.setFixedSize(450, 500)  # Setting the size of the right list
+
+        # Show lists
+        self.leftList.show()  # Showing the left list
+        self.rightList.show()  # Showing the right list
+
+        # Creating input lines
+        self.leftInputLine = QLineEdit(self)  # Creating the left input line
+        self.rightInputLine = QLineEdit(self)  # Creating the right input line
+
+        # Input lines layout
+        self.leftInputLine.move(85, 575)  # Setting the position of the left input line
+        self.rightInputLine.move(615, 575)  # Setting the position of the right input line
+
+        # Sizing input lines
+        self.leftInputLine.setFixedSize(100, 22)  # Setting the size of the left input line
+        self.rightInputLine.setFixedSize(100, 22)  # Setting the size of the right input line
+
+        # Show input lines
+        self.leftInputLine.show()  # Showing the left input line
+        self.rightInputLine.show()  # Showing the right input line
+
+        # Creating buttons
+        self.createBtn = QPushButton("Create", self)  # Creating a create button
+        self.removeBtn = QPushButton("Remove", self)  # Creating a remove button
+        self.renameBtn = QPushButton("Rename", self)  # Creating a rename button
+        self.leftToRightBtn = QPushButton("L to R", self)  # Creating a move "left-to-right" button
+        self.rightToLeftBtn = QPushButton("R to L", self)  # Creating a move "right-to-left" button
+        self.openBtn = QPushButton("Open", self)  # Creating an open files button
+        self.copyLeftLinkBtn = QPushButton("Copy", self)  # Creating a left copy link button
+        self.copyRightLinkBtn = QPushButton("Copy", self)  # Creating a right copy link button
+
+        # Buttons layout
+        self.createBtn.move(475, 100)  # Setting the position of the create button
+        self.removeBtn.move(475, 175)  # Setting the position of the remove button
+        self.renameBtn.move(475, 250)  # Setting the position of the rename button
+        self.leftToRightBtn.move(475, 325)  # Setting the position of the move "left-to-right" button
+        self.rightToLeftBtn.move(475, 400)  # Setting the position of the move "right-to-left" button
+        self.openBtn.move(475, 475)  # Setting the position of the open files button
+        self.copyLeftLinkBtn.move(400, 30)  # Setting the position of the left copy link button
+        self.copyRightLinkBtn.move(930, 30)  # Setting the position of the right copy link button
+
+        # Buttons sizing
+        self.createBtn.setFixedSize(50, 50)  # Setting the size of the create button
+        self.removeBtn.setFixedSize(50, 50)  # Setting the size of the remove button
+        self.renameBtn.setFixedSize(50, 50)  # Setting the size of the rename button
+        self.leftToRightBtn.setFixedSize(50, 50)  # Setting the size of the move "left-to-right" button
+        self.rightToLeftBtn.setFixedSize(50, 50)  # Setting the size of the move "right-to-left" button
+        self.openBtn.setFixedSize(50, 50)  # Setting the size of the open files button
+        self.copyLeftLinkBtn.setFixedSize(60, 22)  # Setting the size of the left copy link button
+        self.copyRightLinkBtn.setFixedSize(60, 22)  # Setting the size of the right copy link button
+
+        # Show buttons
+        self.createBtn.show()  # Showing the create button
+        self.removeBtn.show()  # Showing the remove button
+        self.renameBtn.show()  # Showing the rename button
+        self.leftToRightBtn.show()  # Showing the move "left-to-right" button
+        self.rightToLeftBtn.show()  # Showing the move "right-to-left" button
+        self.openBtn.hide()  # Hiding the open files button
+        self.copyLeftLinkBtn.show()  # Showing the left copy link button
+        self.copyRightLinkBtn.show()  # Showing the right copy link button
+
+        # Events
         self.infoHelp()
         self.loadDefaultDir()
         self.leftComboBoxDrive.activated.connect(self.chooseLeftComboDir)
@@ -84,13 +130,15 @@ class MainWindow(QWidget):
         self.removeBtn.clicked.connect(self.removeFileBtn)
         self.renameBtn.clicked.connect(self.renameFileBtn)
         self.leftToRightBtn.clicked.connect(self.moveLeftToRightBtn)
-        self.rigthToLeftBtn.clicked.connect(self.moveRightToLeftBtn)
+        self.rightToLeftBtn.clicked.connect(self.moveRightToLeftBtn)
         self.leftList.clicked.connect(self.checker)
         self.rightList.clicked.connect(self.checker)
         self.openBtn.clicked.connect(self.openFile)
+        self.copyLeftLinkBtn.clicked.connect(self.clipboardLeft)
+        self.copyRightLinkBtn.clicked.connect(self.clipboardRight)
 
-    # Оброботчики событий
-    def checker(self):
+    # Event handlers
+    def checker(self):  # Type check: folder or file
         try:
             if os.path.isfile(self.leftDir + "/" + self.leftList.currentItem().text()) or os.path.isfile(self.rightDir + "/" + self.rightList.currentItem().text()):
                 self.openBtn.show()
@@ -99,7 +147,7 @@ class MainWindow(QWidget):
         except:
             self.openBtn.hide()
 
-    def loadDir(self):  # Выгрузка файлов папки по выбраному пути
+    def loadDir(self):  # Upload folder files to the selected path
         self.files_with = ["..."]
         self.files = []
         fileList = os.listdir(os.chdir(self.path))
@@ -110,7 +158,7 @@ class MainWindow(QWidget):
                 self.files.append(i)
         self.files_with += self.files
 
-    def loadDefaultDir(self):  # Вывод файлов из диска C в LISTWIDGETS
+    def loadDefaultDir(self):  # Default loading of files to lists
         self.path = "C:/"
         self.loadDir()
 
@@ -128,7 +176,7 @@ class MainWindow(QWidget):
         self.leftComboBoxType.addItems(self.types)
         self.rightComboBoxType.addItems(self.types)
 
-    def chooseLeftComboDir(self):  # Выгрузка файлов в левый LISTWIDGET в зависимости от выбраного диска
+    def chooseLeftComboDir(self):  # Uploading files to the left list depending on the selected drive
         try:
             self.leftList.clear()
             self.path = self.leftComboBoxDrive.currentText()
@@ -138,7 +186,7 @@ class MainWindow(QWidget):
         except Exception as e:
             self.logs(e)
 
-    def chooseRightComboDir(self):  # Выгрузка файлов в правый LISTWIDGET в зависимости от выбраного диска
+    def chooseRightComboDir(self):  # Uploading files to the right list depending on the selected drive
         try:
             self.rightList.clear()
             self.path = self.rightComboBoxDrive.currentText()
@@ -148,7 +196,7 @@ class MainWindow(QWidget):
         except Exception as e:
             self.logs(e)
 
-    def chooseLeftListDir(self):  # Переход по папкам в левом LISTWIDGET
+    def chooseLeftListDir(self):  # Navigating folders in the left list
         try:
             if os.path.isdir(self.leftDir + "/" + self.leftList.currentItem().text()):
                 if self.leftList.currentItem().text() == "...":
@@ -174,7 +222,7 @@ class MainWindow(QWidget):
         except Exception as e:
             self.logs(e)
 
-    def chooseRightListDir(self):  # Переход по папкам в правом LISTWIDGET
+    def chooseRightListDir(self):  # Navigating folders in the right list
         try:
             if os.path.isdir(self.rightDir + "/" + self.rightList.currentItem().text()):
                 if self.rightList.currentItem().text() == "...":
@@ -200,7 +248,7 @@ class MainWindow(QWidget):
         except Exception as e:
             self.logs(e)
 
-    def createFileBtn(self):  # Создание файла
+    def createFileBtn(self):  # Creating files and folders
         try:
             if self.leftInputLine.text() != "":
                 if self.leftComboBoxType.currentText() == "folder":
@@ -220,7 +268,7 @@ class MainWindow(QWidget):
         except Exception as e:
             self.logs(e)
 
-    def removeFileBtn(self):  # Удаление файла
+    def removeFileBtn(self):  # Deleting files and folders
         try:
             if os.path.isfile(f"{self.leftDir}/{self.leftList.currentItem().text()}"):
                 os.remove(f"{self.leftDir}/{self.leftList.currentItem().text()}")
@@ -246,7 +294,7 @@ class MainWindow(QWidget):
         finally:
             print("Successful removal")
 
-    def renameFileBtn(self):  # Переименование файла
+    def renameFileBtn(self):  # Renaming files and folders
         try:
             if self.leftList.currentItem():
                 os.rename(f"{self.leftDir}/{self.leftList.currentItem().text()}",
@@ -258,7 +306,7 @@ class MainWindow(QWidget):
         except Exception as e:
             self.logs(e)
 
-    def moveLeftToRightBtn(self):  # Перемещение слева направо
+    def moveLeftToRightBtn(self):  # Moving "left-to-right"
         try:
             shutil.move(f"{self.leftDir}/{self.leftList.currentItem().text()}",
                         f"{self.rightDir}")
@@ -266,7 +314,7 @@ class MainWindow(QWidget):
         except Exception as e:
             self.logs(e)
 
-    def moveRightToLeftBtn(self):  # Перемещение справа налево
+    def moveRightToLeftBtn(self):  # Moving "right-to-left"
         try:
             shutil.move(f"{self.rightDir}/{self.rightList.currentItem().text()}",
                         f"{self.leftDir}")
@@ -274,7 +322,7 @@ class MainWindow(QWidget):
         except Exception as e:
             self.logs(e)
 
-    def update(self):  # Обновление программы после любых изменений
+    def update(self):  # Updating after any operation in program
         try:
             self.leftList.clear()
             self.path = self.leftComboBoxDrive.currentText()
@@ -290,7 +338,7 @@ class MainWindow(QWidget):
         except Exception as e:
             self.logs(e)
 
-    def openFile(self):
+    def openFile(self):  # Opening files with extensions
         try:
             if os.path.isfile(self.leftDir + "/" + self.leftList.currentItem().text()):
                 os.system(f"{self.leftDir}/{self.leftList.currentItem().text()}")
@@ -299,15 +347,42 @@ class MainWindow(QWidget):
         except Exception as e:
             self.logs(e)
 
+    def clipboardLeft(self):  # Copying left directory link to clipboard
+        import win32clipboard
+
+        win32clipboard.OpenClipboard()
+        win32clipboard.EmptyClipboard()
+        try:
+            if self.leftList.currentItem().text() != "":
+                win32clipboard.SetClipboardText(f"{self.leftDir}/{self.leftList.currentItem().text()}")
+            elif self.leftList.currentItem().text() == "":
+                win32clipboard.SetClipboardText(self.leftDir)
+            win32clipboard.CloseClipboard()
+        except Exception as e:
+            self.logs(e)
+
+    def clipboardRight(self):  # Copying right directory link to clipboard
+        import win32clipboard
+
+        win32clipboard.OpenClipboard()
+        win32clipboard.EmptyClipboard()
+        try:
+            if self.rightList.currentItem().text() != "":
+                win32clipboard.SetClipboardText(f"{self.rightDir}/{self.rightList.currentItem().text()}")
+            elif self.rightList.currentItem().text() == "":
+                win32clipboard.SetClipboardText(self.rightDir)
+        except Exception as e:
+            self.logs(e)
+
     @staticmethod
-    def logs(e):  # Запись логов с ошибками
+    def logs(e):  # Writing logs with errors
         from datetime import datetime
 
         with open("C:/Users/krist/Desktop/Project/total comander/logs.txt", "a") as file:
             file.write(f"[{datetime.now()}]: {e}\n")
 
     @staticmethod
-    def infoHelp():  # Вывод справки
+    def infoHelp():  # Printing info
         print("""
                 Для создания файла выберите тип файла в COMBOBOX(1) и напишите название(без расширений) в LINEEDIT(2) после нажмите кнопку CREATE
 
@@ -326,7 +401,7 @@ class MainWindow(QWidget):
                 """)
 
     @staticmethod
-    def CssLoader():  # Подключение css стилей
+    def CssLoader():  # Adding css styles
         with open("css/style.css", "r") as read:
             style = read.read()
             read.close()
