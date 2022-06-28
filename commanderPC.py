@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QComboBox, QLineEdit, QListWidget, QPushButton, QWidget, QMessageBox
+from PyQt5.QtWidgets import QComboBox, QLineEdit, QListWidget, QPushButton, QWidget, QLabel
 import os, shutil, win32api
 
 
@@ -17,6 +17,7 @@ class MainWindow(QWidget):
         self.leftDir = ""
         self.rightDir = ""
         self.types = ["folder", ".py", ".txt"]
+        self.types2 = ".py.txt.exe.zip.rar"
 
         # Виджеты
         self.leftComboBoxDrive = QComboBox(self)
@@ -27,7 +28,10 @@ class MainWindow(QWidget):
         self.removeBtn = QPushButton("Remove", self)
         self.renameBtn = QPushButton("Rename", self)
         self.leftToRightBtn = QPushButton("L to R", self)
-        self.RigthToLeftBtn = QPushButton("R to L", self)
+        self.rigthToLeftBtn = QPushButton("R to L", self)
+        self.openBtn = QPushButton("Open", self)
+        self.leftWeightLbl = QLabel("0", self)
+        self.rightWeightLbl = QLabel("0", self)
         self.rightComboBoxDrive = QComboBox(self)
         self.rightList = QListWidget(self)
         self.rightComboBoxType = QComboBox(self)
@@ -38,11 +42,14 @@ class MainWindow(QWidget):
         self.leftList.setGeometry(10, 60, 450, 500)
         self.leftComboBoxType.setGeometry(10, 575, 69, 22)
         self.leftInputLine.setGeometry(85, 575, 100, 22)
-        self.createBtn.setGeometry(475, 125, 50, 50)
-        self.removeBtn.setGeometry(475, 200, 50, 50)
-        self.renameBtn.setGeometry(475, 275, 50, 50)
-        self.leftToRightBtn.setGeometry(475, 350, 50, 50)
-        self.RigthToLeftBtn.setGeometry(475, 425, 50, 50)
+        self.createBtn.setGeometry(475, 100, 50, 50)
+        self.removeBtn.setGeometry(475, 175, 50, 50)
+        self.renameBtn.setGeometry(475, 250, 50, 50)
+        self.leftToRightBtn.setGeometry(475, 325, 50, 50)
+        self.rigthToLeftBtn.setGeometry(475, 400, 50, 50)
+        self.openBtn.setGeometry(475, 475, 50, 50)
+        self.leftWeightLbl.setGeometry(285, 575, 50, 22)
+        self.rightWeightLbl.setGeometry(815, 575, 50, 22)
         self.rightComboBoxDrive.setGeometry(540, 30, 69, 22)
         self.rightList.setGeometry(540, 60, 450, 500)
         self.rightComboBoxType.setGeometry(540, 575, 69, 22)
@@ -57,7 +64,10 @@ class MainWindow(QWidget):
         self.removeBtn.show()
         self.renameBtn.show()
         self.leftToRightBtn.show()
-        self.RigthToLeftBtn.show()
+        self.rigthToLeftBtn.show()
+        self.openBtn.hide()
+        self.leftWeightLbl.hide()
+        self.rightWeightLbl.hide()
         self.rightComboBoxDrive.show()
         self.rightList.show()
         self.rightComboBoxType.show()
@@ -74,9 +84,21 @@ class MainWindow(QWidget):
         self.removeBtn.clicked.connect(self.removeFileBtn)
         self.renameBtn.clicked.connect(self.renameFileBtn)
         self.leftToRightBtn.clicked.connect(self.moveLeftToRightBtn)
-        self.RigthToLeftBtn.clicked.connect(self.moveRightToLeftBtn)
+        self.rigthToLeftBtn.clicked.connect(self.moveRightToLeftBtn)
+        self.leftList.clicked.connect(self.checker)
+        self.rightList.clicked.connect(self.checker)
+        self.openBtn.clicked.connect(self.openFile)
 
     # Оброботчики событий
+    def checker(self):
+        try:
+            if os.path.isfile(self.leftDir + "/" + self.leftList.currentItem().text()) or os.path.isfile(self.rightDir + "/" + self.rightList.currentItem().text()):
+                self.openBtn.show()
+            else:
+                self.openBtn.hide()
+        except:
+            self.openBtn.hide()
+
     def loadDir(self):  # Выгрузка файлов папки по выбраному пути
         self.files_with = ["..."]
         self.files = []
@@ -128,56 +150,53 @@ class MainWindow(QWidget):
 
     def chooseLeftListDir(self):  # Переход по папкам в левом LISTWIDGET
         try:
-            if self.leftList.currentItem().text() == "...":
-                a = ""
-                self.path = (os.getcwd()).split("\\")
-                del self.path[-1]
-                for j in self.path:
-                    x = j + "/"
-                    a += x
-                self.path = a
-                self.leftList.clear()
-                self.loadDir()
-                if len(a) == 3 or len(a) == 4:
-                    self.leftList.addItems(self.files)
-                else:
-                    self.leftList.addItems(self.files_with)
-            else:
-                if ".txt" in self.leftList.currentItem().text() or ".py" in self.leftList.currentItem().text():
-                    self.openLeftFile()
+            if os.path.isdir(self.leftDir + "/" + self.leftList.currentItem().text()):
+                if self.leftList.currentItem().text() == "...":
+                    a = ""
+                    self.path = (os.getcwd()).split("\\")
+                    del self.path[-1]
+                    for j in self.path:
+                        x = j + "/"
+                        a += x
+                    self.path = a
+                    self.leftList.clear()
+                    self.loadDir()
+                    if len(a) == 3 or len(a) == 4:
+                        self.leftList.addItems(self.files)
+                    else:
+                        self.leftList.addItems(self.files_with)
                 else:
                     self.path = f"{os.getcwd()}/{self.leftList.currentItem().text()}"
                     self.leftList.clear()
                     self.loadDir()
                     self.leftList.addItems(self.files_with)
-            self.leftDir = self.path
+                self.leftDir = self.path
         except Exception as e:
             self.logs(e)
 
     def chooseRightListDir(self):  # Переход по папкам в правом LISTWIDGET
         try:
-            if self.rightList.currentItem().text() == "...":
-                a = ""
-                self.path = (os.getcwd()).split("\\")
-                del self.path[-1]
-                for j in self.path:
-                    x = j + "/"
-                    a += x
-                self.path = a
-                self.rightList.clear()
-                self.loadDir()
-                if len(a) == 3 or len(a) == 4:
-                    self.rightList.addItems(self.files)
+            if os.path.isdir(self.rightDir + "/" + self.rightList.currentItem().text()):
+                if self.rightList.currentItem().text() == "...":
+                    a = ""
+                    self.path = (os.getcwd()).split("\\")
+                    del self.path[-1]
+                    for j in self.path:
+                        x = j + "/"
+                        a += x
+                    self.path = a
+                    self.rightList.clear()
+                    self.loadDir()
+                    if len(a) == 3 or len(a) == 4:
+                        self.rightList.addItems(self.files)
+                    else:
+                        self.rightList.addItems(self.files_with)
                 else:
+                    self.path = f"{os.getcwd()}/{self.rightList.currentItem().text()}"
+                    self.rightList.clear()
+                    self.loadDir()
                     self.rightList.addItems(self.files_with)
-            else:
-                if ".txt" in self.rightList.currentItem().text() or ".py" in self.rightList.currentItem().text():
-                    self.openRightFile()
-                self.path = f"{os.getcwd()}/{self.rightList.currentItem().text()}"
-                self.rightList.clear()
-                self.loadDir()
-                self.rightList.addItems(self.files_with)
-            self.rightDir = self.path
+                self.rightDir = self.path
         except Exception as e:
             self.logs(e)
 
@@ -187,13 +206,15 @@ class MainWindow(QWidget):
                 if self.leftComboBoxType.currentText() == "folder":
                     os.mkdir(f"{self.leftDir}/{self.leftInputLine.text()}")
                 else:
-                    with open(f"{self.leftDir}/{self.leftInputLine.text()}{self.leftComboBoxType.currentText()}", "w") as file:
+                    with open(f"{self.leftDir}/{self.leftInputLine.text()}{self.leftComboBoxType.currentText()}",
+                              "w") as file:
                         file.write("")
             if self.rightInputLine.text() != "":
                 if self.rightComboBoxType.currentText() == "folder":
                     os.mkdir(f"{self.rightDir}/{self.rightInputLine.text()}")
                 else:
-                    with open(f"{self.rightDir}/{self.rightInputLine.text()}{self.rightComboBoxType.currentText()}", "w") as file:
+                    with open(f"{self.rightDir}/{self.rightInputLine.text()}{self.rightComboBoxType.currentText()}",
+                              "w") as file:
                         file.write("")
             self.update()
         except Exception as e:
@@ -201,11 +222,11 @@ class MainWindow(QWidget):
 
     def removeFileBtn(self):  # Удаление файла
         try:
-            if ".txt" in self.leftList.currentItem().text():
+            if os.path.isfile(f"{self.leftDir}/{self.leftList.currentItem().text()}"):
                 os.remove(f"{self.leftDir}/{self.leftList.currentItem().text()}")
 
-            if ".py" in self.leftList.currentItem().text():
-                os.remove(f"{self.leftDir}/{self.leftList.currentItem().text()}")
+            if os.path.isfile(f"{self.rightDir}/{self.rightList.currentItem().text()}"):
+                os.remove(f"{self.rightDir}/{self.rightList.currentItem().text()}")
 
             if self.leftList.currentItem():
                 shutil.rmtree(f"{self.leftDir}/{self.leftList.currentItem().text()}")
@@ -228,23 +249,27 @@ class MainWindow(QWidget):
     def renameFileBtn(self):  # Переименование файла
         try:
             if self.leftList.currentItem():
-                os.rename(f"{self.leftDir}/{self.leftList.currentItem().text()}", f"{self.leftDir}/{self.leftInputLine.text()}")
+                os.rename(f"{self.leftDir}/{self.leftList.currentItem().text()}",
+                          f"{self.leftDir}/{self.leftInputLine.text()}")
             elif self.rightList.currentItem():
-                os.rename(f"{self.rightDir}/{self.rightList.currentItem().text()}", f"{self.rightDir}/{self.rightInputLine.text()}")
+                os.rename(f"{self.rightDir}/{self.rightList.currentItem().text()}",
+                          f"{self.rightDir}/{self.rightInputLine.text()}")
             self.update()
         except Exception as e:
             self.logs(e)
 
     def moveLeftToRightBtn(self):  # Перемещение слева направо
         try:
-            shutil.move(f"{self.leftDir}/{self.leftList.currentItem().text()}", f"{self.rightDir}")
+            shutil.move(f"{self.leftDir}/{self.leftList.currentItem().text()}",
+                        f"{self.rightDir}")
             self.update()
         except Exception as e:
             self.logs(e)
 
     def moveRightToLeftBtn(self):  # Перемещение справа налево
         try:
-            shutil.move(f"{self.rightDir}/{self.rightList.currentItem().text()}", f"{self.leftDir}")
+            shutil.move(f"{self.rightDir}/{self.rightList.currentItem().text()}",
+                        f"{self.leftDir}")
             self.update()
         except Exception as e:
             self.logs(e)
@@ -265,15 +290,12 @@ class MainWindow(QWidget):
         except Exception as e:
             self.logs(e)
 
-    def openLeftFile(self):  # Открытие файлов с расширениями .txt и .py в левом списке
+    def openFile(self):
         try:
-            os.system(f"{self.leftDir}/{self.leftList.currentItem().text()}")
-        except Exception as e:
-            self.logs(e)
-
-    def openRightFile(self):  # Открытие файлов с расширениями .txt и .py в правом списке
-        try:
-            os.system(f"{self.leftDir}/{self.rightList.currentItem().text()}")
+            if os.path.isfile(self.leftDir + "/" + self.leftList.currentItem().text()):
+                os.system(f"{self.leftDir}/{self.leftList.currentItem().text()}")
+            elif os.path.isfile(self.rightDir + "/" + self.rightList.currentItem().text()):
+                os.system(f"{self.rightDir}/{self.rightList.currentItem().text()}")
         except Exception as e:
             self.logs(e)
 

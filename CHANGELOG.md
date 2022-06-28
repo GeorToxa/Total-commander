@@ -16,3 +16,9 @@ v1.1.1
 Main changes:
 Added:
 -Second try for deleting files and folders
+
+v1.2
+Main changes:
+Added:
+-Opening files with extensions 
+-To open files with extensions, select this file from the list and click the "Open" button
